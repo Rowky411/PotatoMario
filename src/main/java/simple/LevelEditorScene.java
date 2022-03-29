@@ -50,7 +50,11 @@ public class LevelEditorScene extends Scene {
 
 
         if (!firstTime) {
+            System.out.println("Creating object");
             GameObject go = new GameObject("Test 2");
+            go.addComponent(new SpriteRenderer());
+            this.addGameObjectToScene(go);
+            firstTime = true;
 
         }
         for (GameObject go : this.gameObjects) {
