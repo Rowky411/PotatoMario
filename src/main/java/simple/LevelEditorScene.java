@@ -1,6 +1,8 @@
 package simple;
 
 import components.SpriteRenderer;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.lwjgl.system.CallbackI;
 import renderer.Shader;
 import renderer.Texture;
@@ -9,57 +11,43 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class LevelEditorScene extends Scene {
 
-    private float[] vertexArray = {
-            //postion                   //color                   //UV Coordinates
-            100f,  0f,  0.0f,       1.0f, 0.0f, 0.0f, 1.0f,          1, 0,
-            0f,   100f, 0.0f,       1.0f, 1.0f, 0.0f, 1.0f,          0, 1,
-            100f, 100f, 0.0f,       1.0f, 0.0f, 1.0f, 1.0f,          1, 1,
-            0f,    0f,  0.0f,       1.0f, 1.0f, 0.0f, 1.0f,          0, 0
-    };
-
-    private Texture testTexture;
-    private Shader defaultShader;
-
-    GameObject testObj;
-    private boolean firstTime = false;
 
     public LevelEditorScene(){
 
     }
 
     public void init() {
-        System.out.println("Creating Object");
-        this.testObj = new GameObject("test Object");
-        this.testObj.addComponent(new SpriteRenderer());
-        this.addGameObjectToScene(this.testObj);
+        this.camera = new Camera(new Vector2f());
 
-        defaultShader = new Shader("assets/shaders/default.glsl");
-        defaultShader.compile();
+        int xOffset = 10;
+        int yOffset = 10;
 
-        this.testTexture = new Texture("assets/images/images.png");
+        float totalWidth = (float)(600 - xOffset * 2);
+        float totalHeight = (float)(300 - yOffset * 2);
+        float sizeX = totalWidth / 100.0f;
+        float sizeY = totalHeight / 100.0f;
+
+        for (int x=0; x< 100; x++) {
+            for (int y=0; y < 100; y++) {
+                float xPos = xOffset + (x * sizeX);
+                float yPos = yOffset + (y * sizeY);
+
+                GameObject go = new GameObject("obj" + x + ""+ y, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
+                go.addComponent(new SpriteRenderer(new Vector4f(xPos/ totalWidth, yPos/ totalHeight,1,1)));
+                this.addGameObjectToScene(go);
+            }
+        }
 
     }
 
-    public void uptade(float dt) {
-        defaultShader.use();
+    public void update(float dt) {
+        System.out.println("FPS: " + (1.0f / dt));
 
-        defaultShader.uploadTexture("TEX_SAMPLER", 0);
-        glActiveTexture(GL_TEXTURE0);
-        testTexture.bind();
-
-
-
-        if (!firstTime) {
-            System.out.println("Creating object");
-            GameObject go = new GameObject("Test 2");
-            go.addComponent(new SpriteRenderer());
-            this.addGameObjectToScene(go);
-            firstTime = true;
-
-        }
         for (GameObject go : this.gameObjects) {
             go.update(dt);
         }
+
+        this.renderer.render();
     }
 
 
