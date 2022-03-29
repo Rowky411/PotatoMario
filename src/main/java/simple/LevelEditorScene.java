@@ -52,6 +52,7 @@ public class LevelEditorScene extends Scene {
         if (!firstTime) {
             GameObject go = new GameObject("Test 2");
 
+            
         }
         for (GameObject go : this.gameObjects) {
             go.update(dt);
